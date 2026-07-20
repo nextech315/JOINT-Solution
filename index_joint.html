@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexTech AI — Joint 설계·공정 최적화 AI 솔루션</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #07080D;
+    --surface:  #0E1018;
+    --panel:    #141720;
+    --border:   #1E2235;
+    --border2:  #2A2F4A;
+    --cyan:     #00E5FF;
+    --cyan-dim: rgba(0,229,255,0.10);
+    --red:      #FF3B6B;
+    --amber:    #FFB300;
+    --white:    #F0F4FF;
+    --gray:     #8892AA;
+    --lgray:    #C4CCE0;
+    --font-ko:  'Noto Sans KR', sans-serif;
+    --font-en:  'Inter', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--font-ko);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5vw;
+    height: 64px;
+    background: rgba(7,8,13,0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-en);
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--cyan); }
+  .nav-links { display: flex; gap: 2.4rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.85rem; font-weight: 500;
+    color: var(--gray); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--cyan); color: var(--bg);
+    font-size: 0.82rem; font-weight: 700;
+    padding: 0.45rem 1.2rem; border-radius: 6px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 120px 5vw 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.035) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+  }
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+    top: -100px; left: 50%; transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative; z-index: 1;
+    max-width: 880px; text-align: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-en);
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    border: 1px solid rgba(0,229,255,0.25);
+    border-radius: 20px; padding: 0.3rem 0.9rem;
+    margin-bottom: 1.8rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--cyan);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+  .hero-title {
+    font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.4rem;
+  }
+  .hero-title em {
+    font-style: normal;
+    color: var(--cyan);
+  }
+  .hero-sub {
+    font-size: 1.05rem; font-weight: 400;
+    color: var(--lgray); max-width: 620px; margin: 0 auto 2.4rem;
+  }
+  .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--cyan); color: var(--bg);
+    font-weight: 700; font-size: 0.92rem;
+    padding: 0.78rem 2rem; border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.2s, opacity 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+  .btn-outline {
+    background: transparent; color: var(--white);
+    font-weight: 600; font-size: 0.92rem;
+    padding: 0.78rem 2rem; border-radius: 8px;
+    border: 1px solid var(--border2);
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--gray); transform: translateY(-2px); }
+
+  .hero-stats {
+    display: flex; gap: 3rem; justify-content: center;
+    margin-top: 4rem; padding-top: 3rem;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .hero-stat-num {
+    font-family: var(--font-en);
+    font-size: 2.2rem; font-weight: 800;
+    color: var(--white); display: block;
+  }
+  .hero-stat-num span { color: var(--cyan); }
+  .hero-stat-label {
+    font-size: 0.78rem; color: var(--gray);
+    display: block; margin-top: 0.2rem;
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 100px 5vw; }
+  .section-tag {
+    font-family: var(--font-en);
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 0.8rem;
+    display: block;
+  }
+  .section-title {
+    font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+    font-weight: 800; letter-spacing: -0.02em;
+    line-height: 1.2; margin-bottom: 1rem;
+  }
+  .section-sub {
+    font-size: 1rem; color: var(--lgray);
+    max-width: 560px; margin-bottom: 3rem;
+  }
+  .centered { text-align: center; }
+  .centered .section-sub { margin: 0 auto 3rem; }
+
+  /* ── PROBLEM / SOLUTION ── */
+  #problem { background: var(--surface); }
+  .prob-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1.5px; background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    margin-top: 3rem;
+  }
+  .prob-cell {
+    background: var(--panel);
+    padding: 2rem 2.2rem;
+  }
+  .prob-icon {
+    font-size: 1.6rem; margin-bottom: 1rem;
+  }
+  .prob-cell h4 {
+    font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem;
+  }
+  .prob-cell p { font-size: 0.88rem; color: var(--lgray); line-height: 1.7; }
+  .prob-cell.highlight { background: var(--cyan-dim); border: 1px solid rgba(0,229,255,0.18); }
+  .prob-cell.highlight h4 { color: var(--cyan); }
+
+  /* ── HOW IT WORKS ── */
+  #how {
+    position: relative;
+    overflow: hidden;
+  }
+  .how-line {
+    position: absolute; left: 50%; top: 180px; bottom: 60px;
+    width: 1px; background: linear-gradient(to bottom, transparent, var(--border) 10%, var(--border) 90%, transparent);
+    transform: translateX(-50%);
+  }
+  .how-steps { display: flex; flex-direction: column; gap: 3rem; margin-top: 3.5rem; }
+  .how-step {
+    display: grid; grid-template-columns: 1fr 60px 1fr;
+    gap: 2rem; align-items: start;
+  }
+  .how-step:nth-child(even) .step-content { order: 3; text-align: right; }
+  .how-step:nth-child(even) .step-spacer { order: 2; }
+  .how-step:nth-child(even) .step-card { order: 1; }
+  .step-num-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 0;
+  }
+  .step-num {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--panel); border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-en); font-size: 0.82rem; font-weight: 800;
+    color: var(--cyan);
+    position: relative; z-index: 1;
+  }
+  .step-content h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .step-content p { font-size: 0.87rem; color: var(--lgray); line-height: 1.7; }
+  .step-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.4rem 1.6rem;
+  }
+  .step-card-label {
+    font-family: var(--font-en); font-size: 0.68rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gray); margin-bottom: 0.7rem;
+  }
+  .step-card-items { display: flex; flex-direction: column; gap: 0.4rem; }
+  .step-card-item {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-size: 0.83rem; color: var(--lgray);
+  }
+  .step-card-item::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--cyan); flex-shrink: 0;
+  }
+
+  /* ── TWO-WAY OPTIMIZATION ── */
+  #twoway { background: var(--surface); }
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
+  .mode-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+  }
+  .mode-card-tag {
+    display: inline-block; font-size: 0.7rem; font-weight: 700;
+    color: var(--cyan); background: var(--cyan-dim); border-radius: 20px;
+    padding: 0.25rem 0.7rem; margin-bottom: 1rem;
+  }
+  .mode-card h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.7rem; }
+  .mode-card p { font-size: 0.85rem; color: var(--lgray); line-height: 1.7; }
+
+  /* ── TARGETS (quality coverage) ── */
+  #targets { }
+  .defects-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem;
+    margin-top: 3rem;
+  }
+  .defect-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.3rem 1.1rem;
+    transition: border-color 0.25s, transform 0.25s;
+    cursor: default;
+  }
+  .defect-card:hover {
+    border-color: var(--cyan);
+    transform: translateY(-4px);
+  }
+  .defect-num {
+    font-family: var(--font-en); font-size: 0.68rem; font-weight: 700;
+    color: var(--gray); margin-bottom: 0.6rem;
+  }
+  .defect-name-ko { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.2rem; line-height: 1.4; }
+  .defect-name-en { font-size: 0.72rem; color: var(--gray); font-family: var(--font-en); }
+
+  /* ── FEATURES ── */
+  #features { background: var(--surface); overflow: hidden; }
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .feature-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 2rem;
+    transition: border-color 0.25s;
+  }
+  .feature-card:hover { border-color: var(--border2); }
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--cyan-dim); border: 1px solid rgba(0,229,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 1.2rem;
+  }
+  .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .feature-card p { font-size: 0.85rem; color: var(--lgray); line-height: 1.7; }
+
+  /* ── ALGORITHM ── */
+  #algorithm { }
+  .algo-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 3rem; }
+  .algo-list { display: flex; flex-direction: column; gap: 1rem; }
+  .algo-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1.2rem 1.4rem;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .algo-item:hover { border-color: var(--border2); }
+  .algo-badge {
+    background: var(--cyan-dim); color: var(--cyan);
+    font-family: var(--font-en); font-size: 0.7rem; font-weight: 700;
+    padding: 0.2rem 0.6rem; border-radius: 4px;
+    white-space: nowrap; margin-top: 0.1rem;
+    border: 1px solid rgba(0,229,255,0.2);
+  }
+  .algo-item h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .algo-item p { font-size: 0.8rem; color: var(--lgray); }
+  .algo-visual {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+  }
+  .algo-visual-title {
+    font-family: var(--font-en); font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--gray); margin-bottom: 1.5rem;
+  }
+  .algo-opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.6rem; }
+  .algo-opt-item {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.9rem 1rem;
+  }
+  .algo-opt-name {
+    font-family: var(--font-en); font-size: 0.8rem; font-weight: 800; color: var(--cyan);
+  }
+  .algo-opt-item p { font-size: 0.74rem; color: var(--gray); margin-top: 0.35rem; line-height: 1.5; }
+  .algo-note {
+    font-size: 0.78rem; color: var(--lgray); line-height: 1.7;
+    background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.15);
+    border-radius: 12px; padding: 1rem 1.2rem;
+  }
+  .algo-note + .algo-note { margin-top: 0.9rem; }
+
+  /* ── CASE STUDY ── */
+  #case { background: var(--surface); }
+  .accuracy-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.2rem; margin-top: 3rem; }
+  .accuracy-stat {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem 1.6rem;
+  }
+  .accuracy-stat-val {
+    font-family: var(--font-en); font-size: 1.9rem; font-weight: 800; color: var(--white);
+  }
+  .accuracy-stat-val span { color: var(--cyan); font-size: 1.1rem; }
+  .accuracy-stat-label { font-size: 0.8rem; color: var(--gray); margin-top: 0.4rem; line-height: 1.5; }
+
+  .compare-table-wrap {
+    overflow-x: auto; margin-top: 2.5rem;
+    border: 1px solid var(--border); border-radius: 14px;
+  }
+  table.compare-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; min-width: 680px; }
+  .compare-table th {
+    background: var(--panel); color: var(--gray); font-weight: 600;
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.9rem 1.1rem; text-align: left; border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .compare-table td {
+    padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--border);
+    color: var(--lgray); white-space: nowrap;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td.target-name { color: var(--white); font-weight: 700; font-family: var(--font-en); }
+  .compare-table td.target-name small { display: block; color: var(--gray); font-weight: 400; font-family: var(--font-ko); font-size: 0.72rem; margin-top: 0.15rem; }
+  .compare-table td.diff-val { font-family: var(--font-en); }
+  .compare-table .ok-badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.72rem; font-weight: 700; color: #10b981;
+    background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.2);
+    padding: 0.18rem 0.6rem; border-radius: 20px;
+  }
+  .compare-table .na { color: var(--border2); }
+  .compare-note { margin-top: 1.2rem; font-size: 0.76rem; color: var(--gray); }
+  .case-insight {
+    margin-top: 1.6rem; font-size: 0.82rem; color: var(--lgray);
+    background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.15);
+    border-radius: 12px; padding: 1.1rem 1.3rem; line-height: 1.7;
+  }
+
+  /* ── ADVANTAGE ── */
+  #advantage { }
+  .adv-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; margin-top: 3rem; }
+  .adv-card {
+    padding: 2.2rem 2rem;
+    border-radius: 16px; border: 1px solid var(--border);
+    background: var(--panel);
+    position: relative; overflow: hidden;
+  }
+  .adv-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), transparent);
+  }
+  .adv-num {
+    font-family: var(--font-en); font-size: 2.8rem; font-weight: 900;
+    color: var(--border2); line-height: 1; margin-bottom: 1rem;
+    letter-spacing: -0.04em;
+  }
+  .adv-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .adv-card p { font-size: 0.84rem; color: var(--lgray); line-height: 1.7; }
+
+  /* ── CONTACT / CTA ── */
+  #contact {
+    text-align: center;
+    padding: 120px 5vw;
+    position: relative; overflow: hidden;
+    background: var(--surface);
+  }
+  .contact-glow {
+    position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,255,0.07) 0%, transparent 70%);
+    bottom: -200px; left: 50%; transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .contact-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+  .contact-title {
+    font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900;
+    letter-spacing: -0.03em; margin-bottom: 1rem;
+  }
+  .contact-sub { font-size: 1rem; color: var(--lgray); margin-bottom: 2.5rem; }
+  .contact-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem 2.4rem; margin-top: 2.5rem;
+    text-align: left;
+  }
+  .contact-card-title { font-size: 0.78rem; color: var(--gray); margin-bottom: 1rem; }
+  .contact-row {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.8rem 0; border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .contact-row:last-child { border-bottom: none; }
+  .contact-row-label { color: var(--gray); width: 60px; flex-shrink: 0; font-size: 0.8rem; }
+  .contact-row-val { color: var(--white); font-weight: 500; }
+  .contact-row-val a { color: var(--cyan); text-decoration: none; }
+  .contact-row-val a:hover { text-decoration: underline; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 5vw;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 0.78rem; color: var(--gray);
+    flex-wrap: wrap; gap: 0.8rem;
+  }
+  .footer-logo {
+    font-family: var(--font-en); font-weight: 800; font-size: 0.95rem;
+    color: var(--white); text-decoration: none;
+  }
+  .footer-logo span { color: var(--cyan); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .prob-grid { grid-template-columns: 1fr; }
+    .defects-grid { grid-template-columns: repeat(2, 1fr); }
+    .features-grid { grid-template-columns: 1fr; }
+    .algo-wrap { grid-template-columns: 1fr; }
+    .algo-opt-grid { grid-template-columns: 1fr; }
+    .mode-grid { grid-template-columns: 1fr; }
+    .accuracy-stats { grid-template-columns: 1fr; }
+    .adv-grid { grid-template-columns: 1fr; }
+    .how-line { display: none; }
+    .how-step { grid-template-columns: 1fr; }
+    .how-step:nth-child(even) .step-content { order: unset; text-align: left; }
+    .hero-stats { flex-direction: column; gap: 1.5rem; align-items: center; }
+  }
+  @media (max-width: 600px) {
+    .defects-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Nex<span>Tech</span> AI</a>
+  <ul class="nav-links">
+    <li><a href="#how">솔루션</a></li>
+    <li><a href="#targets">품질 타겟</a></li>
+    <li><a href="#features">기능</a></li>
+    <li><a href="#case">적용 사례</a></li>
+    <li><a href="#contact">문의</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">데모 신청</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">AI-Powered Joint Design & Process Optimization</div>
+    <h1 class="hero-title">
+      Joint 설계·공정,<br>
+      이제 <em>AI가</em> 먼저 계산합니다
+    </h1>
+    <p class="hero-sub">
+      설계 변수 34개와 품질 타겟 10개의 관계를 AI가 동시에 학습해, 목표 품질을 만족하는
+      최적의 설계·공정 조건을 역으로 계산합니다. 시작(Try-out) 제작 전에 결과를 미리
+      검증하는 차세대 Joint 설계 최적화 솔루션입니다.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">무료 데모 신청</a>
+      <a href="#how" class="btn-outline">솔루션 알아보기</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <span class="hero-stat-num">34<span>개</span></span>
+        <span class="hero-stat-label">설계·공정 변수 동시 분석</span>
+      </div>
+      <div>
+        <span class="hero-stat-num">10<span>개</span></span>
+        <span class="hero-stat-label">품질 타겟 동시 예측</span>
+      </div>
+      <div>
+        <span class="hero-stat-num"><span>&lt;</span>5<span>초</span></span>
+        <span class="hero-stat-label">최적 조건 도출 시간</span>
+      </div>
+      <div>
+        <span class="hero-stat-num">KO<span>/</span>EN</span>
+        <span class="hero-stat-label">한·영 동시 지원</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="reveal">
+    <span class="section-tag">The Problem</span>
+    <h2 class="section-title">기존 설계 방식의 한계</h2>
+    <p class="section-sub">시작(Try-out) 제작과 반복 TEST에 의존하던 Joint 설계 검증, 이제는 AI 예측으로 대체할 때입니다.</p>
+  </div>
+  <div class="prob-grid reveal">
+    <div class="prob-cell">
+      <div class="prob-icon">🔧</div>
+      <h4>반복되는 시작(Try-out) 제작</h4>
+      <p>설계를 바꿀 때마다 목업을 만들고 TEST를 반복해야 합니다. Breakaway Torque, 유격 등 핵심 품질은 실제로 만들어봐야 확인할 수 있습니다.</p>
+    </div>
+    <div class="prob-cell">
+      <div class="prob-icon">🧩</div>
+      <h4>34개 변수의 복잡한 상호작용</h4>
+      <p>설계 변수 33개와 공정 변수 1개가 10개 품질 타겟에 동시에 영향을 미칩니다. 사람이 손으로 최적 조합을 찾기엔 경우의 수가 너무 많습니다.</p>
+    </div>
+    <div class="prob-cell">
+      <div class="prob-icon">⏳</div>
+      <h4>길어지는 설계 검증 주기</h4>
+      <p>도면을 변경할 때마다 시작 제작과 TEST에 수일에서 수주가 소요됩니다. 양산 일정에 맞춰 설계를 확정하기가 촉박합니다.</p>
+    </div>
+    <div class="prob-cell highlight">
+      <div class="prob-icon">✅</div>
+      <h4>NexTech Joint AI 솔루션</h4>
+      <p>실측 데이터를 학습한 AI가 설계 변경 전에 품질 결과를 미리 예측하고, 목표 품질을 만족하는 최적 설계·공정 조건을 수 초 만에 역으로 계산합니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="reveal centered">
+    <span class="section-tag">How It Works</span>
+    <h2 class="section-title">3단계로 완성되는<br>AI 설계·공정 최적화</h2>
+    <p class="section-sub">데이터를 올리는 순간부터, AI가 목표 품질을 만족하는 조건을 찾아 즉시 적용 가능한 답을 드립니다.</p>
+  </div>
+  <div class="how-line"></div>
+  <div class="how-steps reveal">
+
+    <div class="how-step">
+      <div class="step-content">
+        <h3>데이터 업로드 & AI 자동 학습</h3>
+        <p>설계 변수 33개, 공정 변수 1개, 품질 타겟 10개 데이터를 CSV·XLSX·DB로 업로드하면, "RUN ENGINE INIT & DATA MERGE" 한 번의 클릭으로 AI가 10개 타겟마다 가장 정확한 모델을 자동으로 학습합니다.</p>
+      </div>
+      <div class="step-num-wrap step-spacer">
+        <div class="step-num">01</div>
+      </div>
+      <div class="step-card">
+        <div class="step-card-label">입력 데이터</div>
+        <div class="step-card-items">
+          <div class="step-card-item">설계 변수 33개 (Ball Diameter, Case Inner Diameter 등)</div>
+          <div class="step-card-item">공정 변수 1개 (Case Outer Height After)</div>
+          <div class="step-card-item">품질 타겟 10개 (Breakaway Torque, 유격, 강성 등)</div>
+          <div class="step-card-item">CSV · XLSX · DB 파일 자동 병합</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="how-step">
+      <div class="step-card">
+        <div class="step-card-label">탐색 결과 예시</div>
+        <div class="step-card-items">
+          <div class="step-card-item">Tab1 — 품질 목표 → 최적 설계 조건 역산</div>
+          <div class="step-card-item">Tab2 — 설계 범위 → 예상 품질 10종 순방향 예측</div>
+          <div class="step-card-item">역추론 알고리즘 4종 동시 실행 후 최소 손실 값 채택</div>
+          <div class="step-card-item">실행 후 수 초 내 결과 도출</div>
+        </div>
+      </div>
+      <div class="step-num-wrap step-spacer">
+        <div class="step-num">02</div>
+      </div>
+      <div class="step-content">
+        <h3>목적에 맞는 탭 선택 & 최적화 실행</h3>
+        <p>품질 목표가 정해져 있으면 Tab1에서 목표를 만족하는 설계 조건을 역으로 계산하고, 설계 범위가 정해져 있으면 Tab2에서 그 범위 안의 예상 품질을 순방향으로 예측합니다.</p>
+      </div>
+    </div>
+
+    <div class="how-step">
+      <div class="step-content">
+        <h3>결과 검증 & 처방 가이드</h3>
+        <p>타겟 이탈 여부를 색상 카드로 진단하고, 상관관계 히트맵과 시계열 트렌드로 데이터를 점검합니다. 스펙이 바뀌면 즉시 처방 계산으로 우선 변경할 변수를 알려줍니다.</p>
+      </div>
+      <div class="step-num-wrap step-spacer">
+        <div class="step-num">03</div>
+      </div>
+      <div class="step-card">
+        <div class="step-card-label">출력 결과</div>
+        <div class="step-card-items">
+          <div class="step-card-item">타겟별 도달/이탈 진단 카드</div>
+          <div class="step-card-item">상관관계 히트맵 · 변수 민감도 분석</div>
+          <div class="step-card-item">AI 추천값 vs 현재값 비교 (★ 우선 변경 표시)</div>
+          <div class="step-card-item">LLM 기반 공정 가이드 다운로드</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TWO-WAY OPTIMIZATION -->
+<section id="twoway">
+  <div class="reveal">
+    <span class="section-tag">Two-Way Optimization</span>
+    <h2 class="section-title">목적에 따라 고르는<br>두 방향 최적화</h2>
+    <p class="section-sub">품질이 먼저 정해져 있는지, 설계 범위가 먼저 정해져 있는지에 따라 AI 계산 방향을 바꿉니다.</p>
+  </div>
+  <div class="mode-grid reveal">
+    <div class="mode-card">
+      <span class="mode-card-tag">Tab 1 · 역추론 최적화</span>
+      <h4>Spec.(품질) 타겟팅 최적화</h4>
+      <p>목표 품질(예: Breakaway Torque 5~7 Nm)을 입력하면, 그 품질을 만족하는 최적의 설계·공정 변수 조합을 역으로 계산합니다. "품질 목표는 정해져 있는데 어떻게 설계해야 할지 모를 때" 사용합니다.</p>
+    </div>
+    <div class="mode-card">
+      <span class="mode-card-tag">Tab 2 · 순방향 예측</span>
+      <h4>설계 & 공정 변수 타겟팅 최적화</h4>
+      <p>이미 정해진 설계·공정 조건의 범위를 입력하면, 그 범위 안에서 예상되는 10개 품질 타겟 값을 순방향으로 예측합니다. "설계 범위는 정해져 있는데 스펙을 맞출 수 있을지 궁금할 때" 사용합니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TARGETS -->
+<section id="targets">
+  <div class="reveal centered">
+    <span class="section-tag">Quality Coverage</span>
+    <h2 class="section-title">10개 품질 타겟 동시 예측</h2>
+    <p class="section-sub">Joint의 핵심 성능 지표 10가지를 하나의 AI가 동시에 학습하고 예측합니다.</p>
+  </div>
+  <div class="defects-grid reveal">
+    <div class="defect-card"><div class="defect-num">01</div><div class="defect-name-ko">회전 개시 토크</div><div class="defect-name-en">Breakaway Torque</div></div>
+    <div class="defect-card"><div class="defect-num">02</div><div class="defect-name-ko">회전 저항 토크</div><div class="defect-name-en">Running Torque</div></div>
+    <div class="defect-card"><div class="defect-num">03</div><div class="defect-name-ko">축방향 유격(초기)</div><div class="defect-name-en">Axial Gap Before</div></div>
+    <div class="defect-card"><div class="defect-num">04</div><div class="defect-name-ko">반경방향 유격(초기)</div><div class="defect-name-en">Radial Gap Before</div></div>
+    <div class="defect-card"><div class="defect-num">05</div><div class="defect-name-ko">축방향 유격(내구 후)</div><div class="defect-name-en">Axial Gap After</div></div>
+    <div class="defect-card"><div class="defect-num">06</div><div class="defect-name-ko">반경방향 유격(내구 후)</div><div class="defect-name-en">Radial Gap After</div></div>
+    <div class="defect-card"><div class="defect-num">07</div><div class="defect-name-ko">축방향 유격 증가량</div><div class="defect-name-en">Axial Gap Increase</div></div>
+    <div class="defect-card"><div class="defect-num">08</div><div class="defect-name-ko">반경방향 유격 증가량</div><div class="defect-name-en">Radial Gap Increase</div></div>
+    <div class="defect-card"><div class="defect-num">09</div><div class="defect-name-ko">축방향 최소 강성</div><div class="defect-name-en">Axial Min Stiffness</div></div>
+    <div class="defect-card"><div class="defect-num">10</div><div class="defect-name-ko">반경방향 최소 강성</div><div class="defect-name-en">Radial Min Stiffness</div></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="reveal">
+    <span class="section-tag">Features</span>
+    <h2 class="section-title">현장을 위한<br>핵심 기능</h2>
+    <p class="section-sub">이론과 실측 데이터를 결합한 기능 설계로, 도입 즉시 설계 검증 효과를 체감할 수 있습니다.</p>
+  </div>
+  <div class="features-grid reveal">
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <h3>2-Way 최적화 엔진</h3>
+      <p>품질 목표 → 설계 조건 역산(Tab1)과 설계 조건 → 품질 예측(Tab2)을 모두 지원합니다. 상황에 맞는 방향으로 계산합니다.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>알고리즘 자동 선택</h3>
+      <p>Linear, Ridge, RandomForest, XGBoost, GradientBoosting 중 타겟마다 가장 정확한 모델을 R² 기준으로 자동 선택합니다.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>역추론 최적화 엔진</h3>
+      <p>L-BFGS-B, SLSQP, Powell, Nelder-Mead 4종 알고리즘을 동시 실행해 손실 함수가 가장 낮은 결과를 채택합니다.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <h3>할루시네이션 방지 3중 방어</h3>
+      <p>Feasibility 판별로 달성 불가능한 목표를 배제하고, 물리적 범위를 강제하며, Confidence Score로 신뢰도를 투명하게 공개합니다.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💊</div>
+      <h3>AI 즉시 처방 (Tab4)</h3>
+      <p>스펙이 바뀌어도 새 목표 범위만 입력하면 즉시 처방 계산. 현재 값 대비 우선적으로 바꿔야 할 변수를 ★ 표시로 정렬합니다.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📝</div>
+      <h3>LLM 기반 공정 가이드</h3>
+      <p>달성 불가 타겟 분석, 스펙 이탈 분석, Feature Importance 기반 조정 가이드, 단계별 Action Plan을 자동 생성합니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ALGORITHM -->
+<section id="algorithm">
+  <div class="algo-wrap reveal">
+    <div>
+      <span class="section-tag">AI Engine</span>
+      <h2 class="section-title">타겟마다 다른<br>최적 알고리즘을<br>자동 선택</h2>
+      <p class="section-sub">10개 품질 타겟은 서로 다른 패턴을 가집니다. 데이터 특성에 맞춰 학습 알고리즘과 최적화 알고리즘을 자동으로 조합합니다.</p>
+      <div class="algo-list">
+        <div class="algo-item">
+          <div class="algo-badge">Linear</div>
+          <div>
+            <h4>Linear Regression / Ridge</h4>
+            <p>변수 간 선형 관계를 빠르게 파악하는 기준 모델. 공정 변수 변화가 결과에 미치는 영향을 직접적으로 계산합니다.</p>
+          </div>
+        </div>
+        <div class="algo-item">
+          <div class="algo-badge">Tree</div>
+          <div>
+            <h4>RandomForest Regressor</h4>
+            <p>여러 결정 트리를 앙상블해 비선형 패턴에 강하고, 변수가 많고 복잡한 Joint 데이터에서도 안정적인 성능을 보입니다.</p>
+          </div>
+        </div>
+        <div class="algo-item">
+          <div class="algo-badge">Boost</div>
+          <div>
+            <h4>XGBoost / GradientBoosting</h4>
+            <p>오차를 보완하며 학습하는 부스팅 방식. 정형 데이터 분석에서 가장 정밀한 예측 성능을 제공하며 KPI 예측 정확도의 핵심 역할을 합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="algo-visual">
+      <div class="algo-visual-title">최적화 엔진 — 손실 함수 최소화</div>
+      <div class="algo-opt-grid">
+        <div class="algo-opt-item">
+          <div class="algo-opt-name">SLSQP</div>
+          <p>제약 조건이 있는 비선형 최적화에 특화</p>
+        </div>
+        <div class="algo-opt-item">
+          <div class="algo-opt-name">L-BFGS-B</div>
+          <p>메모리 효율적, 변수가 많아도 빠르게 수렴</p>
+        </div>
+        <div class="algo-opt-item">
+          <div class="algo-opt-name">Powell</div>
+          <p>미분 없이 최적화, 불연속 함수에도 대응</p>
+        </div>
+        <div class="algo-opt-item">
+          <div class="algo-opt-name">Nelder-Mead</div>
+          <p>그래디언트 없이 동작하는 대안적 탐색</p>
+        </div>
+      </div>
+      <div class="algo-note">각 타겟마다 손실 함수의 형태가 다르기 때문에 4종 알고리즘을 모두 실행한 뒤 가장 낮은 손실 값을 채택합니다. 손실 함수에는 달성 가능성을 반영하는 Feasibility 가중치와, 현실적인 범위를 벗어나지 않도록 하는 정규화 패널티가 포함됩니다.</div>
+      <div class="algo-note">💡 <strong style="color:var(--white)">Target Optimization Confidence 100%란?</strong> AI 정확도가 100%라는 뜻이 아니라, 설정한 품질 목표에 대해 계산된 값이 얼마나 근접한지를 백분율로 나타낸 지표입니다. 타겟 범위가 넓고 계산 값이 범위 중심에 가까울수록 100%에 가까워지고, 범위가 좁거나 경계에 걸쳐 있을수록 낮아집니다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CASE STUDY -->
+<section id="case">
+  <div class="reveal">
+    <span class="section-tag">Case Study</span>
+    <h2 class="section-title">실제 적용 사례:<br>Volvo SPA12 CABJ 볼 조인트 검증</h2>
+    <p class="section-sub">완성차向 볼 조인트 프로젝트에서 AI 예측값과 실제 TEST 실측값(6개 샘플 평균)을 비교 검증한 사례입니다.</p>
+  </div>
+
+  <div class="accuracy-stats reveal">
+    <div class="accuracy-stat">
+      <div class="accuracy-stat-val">0.003<span>mm</span></div>
+      <div class="accuracy-stat-label">설계 변수 31개 항목 평균 예측 오차 (약 3㎛)</div>
+    </div>
+    <div class="accuracy-stat">
+      <div class="accuracy-stat-val">6<span>/6</span></div>
+      <div class="accuracy-stat-label">Spec 판정 대상 품질 타겟 전 항목 OK</div>
+    </div>
+    <div class="accuracy-stat">
+      <div class="accuracy-stat-val">0.023<span>mm</span></div>
+      <div class="accuracy-stat-label">전체 설계·공정 변수 중 최대 예측 오차</div>
+    </div>
+  </div>
+
+  <div class="compare-table-wrap reveal">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>품질 타겟</th>
+          <th>AI 예측</th>
+          <th>TEST 실측</th>
+          <th>차이 (AI-TEST)</th>
+          <th>Spec</th>
+          <th>판정</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="target-name">BT<small>Breakaway Torque</small></td>
+          <td>5.288</td><td>6.243</td><td class="diff-val">-0.955</td><td>0~8.0 Nm</td>
+          <td><span class="ok-badge">OK</span></td>
+        </tr>
+        <tr>
+          <td class="target-name">RT<small>Running Torque</small></td>
+          <td>3.053</td><td>3.320</td><td class="diff-val">-0.267</td><td>0~4.0 Nm</td>
+          <td><span class="ok-badge">OK</span></td>
+        </tr>
+        <tr>
+          <td class="target-name">AGB<small>Axial Gap Before</small></td>
+          <td>0.062</td><td>0.063</td><td class="diff-val">-0.002</td><td>0~0.3 mm</td>
+          <td><span class="ok-badge">OK</span></td>
+        </tr>
+        <tr>
+          <td class="target-name">RGB<small>Radial Gap Before</small></td>
+          <td>0.071</td><td>0.074</td><td class="diff-val">-0.003</td><td>0~0.4 mm</td>
+          <td><span class="ok-badge">OK</span></td>
+        </tr>
+        <tr>
+          <td class="target-name">AGA<small>Axial Gap After</small></td>
+          <td>0.133</td><td>0.126</td><td class="diff-val">+0.006</td><td class="na">–</td>
+          <td class="na">–</td>
+        </tr>
+        <tr>
+          <td class="target-name">RGA<small>Radial Gap After</small></td>
+          <td>0.088</td><td>0.095</td><td class="diff-val">-0.007</td><td class="na">–</td>
+          <td class="na">–</td>
+        </tr>
+        <tr>
+          <td class="target-name">AGI<small>Axial Gap Increase</small></td>
+          <td>0.071</td><td>0.063</td><td class="diff-val">+0.008</td><td class="na">–</td>
+          <td class="na">–</td>
+        </tr>
+        <tr>
+          <td class="target-name">RGI<small>Radial Gap Increase</small></td>
+          <td>0.017</td><td>0.021</td><td class="diff-val">-0.004</td><td class="na">–</td>
+          <td class="na">–</td>
+        </tr>
+        <tr>
+          <td class="target-name">ABAMS<small>Axial Min Stiffness</small></td>
+          <td>26.149</td><td>25.357</td><td class="diff-val">+0.792</td><td>25 Min</td>
+          <td><span class="ok-badge">OK*</span></td>
+        </tr>
+        <tr>
+          <td class="target-name">RBAMS<small>Radial Min Stiffness</small></td>
+          <td>76.515</td><td>70.093</td><td class="diff-val">+6.421</td><td>25 Min</td>
+          <td><span class="ok-badge">OK</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="compare-note">* 설계 변수 33개, 공정 변수 1개 등 34개 입력 변수를 기반으로 예측했으며, TEST 값은 동일 조건 6개 샘플의 평균입니다.</p>
+
+  <div class="case-insight reveal">💡 <strong style="color:var(--white)">ABAMS(축방향 최소 강성)</strong> 항목은 실제 TEST 6개 샘플 중 2개가 Spec 기준 NG였을 만큼 실측 편차가 컸지만, AI 예측 값은 오차 0.792 이내로 안정적으로 Spec을 충족했습니다. 소수 샘플 실측에 의존할 때 발생할 수 있는 리스크를, AI 예측이 보완할 수 있음을 보여주는 사례입니다.</div>
+</section>
+
+<!-- ADVANTAGE -->
+<section id="advantage">
+  <div class="reveal centered">
+    <span class="section-tag">Why NexTech AI</span>
+    <h2 class="section-title">선택해야 하는 이유</h2>
+    <p class="section-sub">기술력과 실측 데이터 검증의 결합으로 만든 솔루션입니다.</p>
+  </div>
+  <div class="adv-grid reveal">
+    <div class="adv-card">
+      <div class="adv-num">01</div>
+      <h3>즉각적인 설계 검증</h3>
+      <p>시작(Try-out) 제작 없이 AI가 수 초 안에 예측 결과를 제시합니다. 설계 변경 사이클을 크게 단축합니다.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-num">02</div>
+      <h3>실측 데이터로 검증된 정확도</h3>
+      <p>Volvo SPA12 CABJ 프로젝트에서 실제 TEST 대비 평균 0.003mm(3㎛) 오차로 검증된 예측 정확도를 보유합니다.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-num">03</div>
+      <h3>할루시네이션 방지 구조</h3>
+      <p>Feasibility 판별, 물리적 범위 강제, Confidence Score까지 3단계 방어 로직으로 신뢰할 수 있는 결과만 제공합니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-glow"></div>
+  <div class="contact-inner reveal">
+    <span class="section-tag" style="justify-content:center;display:block">Contact</span>
+    <h2 class="contact-title">지금 바로<br>시작하세요</h2>
+    <p class="contact-sub">설계·공정 데이터만 있으면 즉시 도입 가능합니다. 무료 데모 및 기술 문의를 환영합니다.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="mailto:nextech315@gmail.com" class="btn-primary">데모 신청 / 문의하기</a>
+      <a href="#how" class="btn-outline">솔루션 다시 보기</a>
+    </div>
+    <div class="contact-card">
+      <div class="contact-card-title">연락처 정보</div>
+      <div class="contact-row">
+        <span class="contact-row-label">개발자</span>
+        <span class="contact-row-val">Woong KIM</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-row-label">이메일</span>
+        <span class="contact-row-val"><a href="mailto:nextech315@gmail.com">nextech315@gmail.com</a></span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-row-label">솔루션</span>
+        <span class="contact-row-val">JOINT AI Process Optimization Suite v1.5</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-row-label">언어</span>
+        <span class="contact-row-val">한국어 / English</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="footer-logo">Nex<span>Tech</span> AI</a>
+  <span>© 2025 NexTech AI. AI-Powered Joint Design & Process Optimization.</span>
+  <span>nextech315@gmail.com</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => io.observe(el));
+
+  // Nav active
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--white)' : '';
+    });
+  });
+</script>
+</body>
+</html>
